@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kittensville's Blog</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  /* ---- channel tab bar ---- */
+  .channels {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .35rem;
+    border-bottom: 2px solid var(--border);
+    padding: 0 0 .5rem; margin: 0 0 1.8rem;
+  }
+  .ch-label {
+    color: var(--dim); font-size: .72rem; letter-spacing: .16em;
+    text-transform: uppercase; margin-right: .4rem; padding-bottom: .1rem;
+  }
+  .tab { position: relative; }
+  .tab > button {
+    background: transparent; border: 1px solid var(--code-border);
+    color: var(--text); border-radius: 8px; padding: .45em .95em;
+    font: inherit; font-size: .95rem; cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .tab > button:hover, .tab > button.active {
+    background: var(--user-bg); color: var(--user-text); border-color: var(--border);
+  }
+  .tab .menu {
+    display: none; position: absolute; top: calc(100% + 6px); left: 0;
+    min-width: 210px; background: var(--bg-panel);
+    border: 1px solid var(--code-border); border-radius: 9px;
+    padding: .35rem; z-index: 30; box-shadow: 0 10px 28px rgba(0,0,0,.55);
+  }
+  .tab:hover .menu, .tab:focus-within .menu { display: block; }
+  .tab .menu a {
+    display: block; padding: .42em .7em; color: var(--text);
+    text-decoration: none; border-radius: 5px; font-size: .92rem;
+  }
+  .tab .menu a:hover { background: var(--user-bg); color: var(--user-text); }
+  .tab .menu .none {
+    display: block; padding: .42em .7em; color: var(--dim);
+    font-size: .85rem; font-style: italic;
+  }
+  @media (max-width: 560px) { .ch-label { display: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="page-head">
+    <p class="kicker"><span class="live">●</span> welcome, wanderer</p>
+    <h1>Kittensville's Blog</h1>
+    <p class="sub">Tech makes life better, iff in our hands.</p>
+  </header>
+
+  <nav class="channels" aria-label="Channels">
+    <span class="ch-label">Channels:</span>
+
+    <div class="tab">
+      <button data-md="latest.md">Latest</button>
+      <div class="menu"><span class="none">nothing yet — the cave is still growing</span></div>
+    </div>
+
+    <div class="tab">
+      <button data-md="hairy.md">Hairy</button>
+      <div class="menu"><span class="none">just me — click the tab</span></div>
+    </div>
+
+    <div class="tab">
+      <button data-md="creatures.md">Creatures</button>
+      <div class="menu">
+        <a href="#molly" data-md="creatures.md">Molly</a>
+        <a href="#vectorian" data-md="creatures.md">Vectorian</a>
+        <a href="#cubic-creatures" data-md="creatures.md">Cubic Creatures</a>
+      </div>
+    </div>
+
+    <div class="tab">
+      <button data-md="scribbles.md">Scribbles</button>
+      <div class="menu">
+        <a href="scribbles/200-years-later.md" data-md="scribbles/200-years-later.md">200 years later</a>
+        <a href="scribbles/naturalist-notes.md" data-md="scribbles/naturalist-notes.md">Kittensville Naturalist Notes</a>
+        <a href="scribbles/chemistry-swamp.md" data-md="scribbles/chemistry-swamp.md">Chemistry Swamp</a>
+        <a href="scribbles/porkchop.md" data-md="scribbles/porkchop.md">PorkChop</a>
+        <a href="scribbles/alchemy-witch.md" data-md="scribbles/alchemy-witch.md">Alchemy Witch</a>
+        <a href="scribbles/how-2-stack-rocks.md" data-md="scribbles/how-2-stack-rocks.md">How 2 Stack Rocks</a>
+        <a href="scribbles/adventure-stories.md" data-md="scribbles/adventure-stories.md">Adventure stories</a>
+      </div>
+    </div>
+
+    <div class="tab">
+      <button data-md="about.md">About the Blogger</button>
+      <div class="menu"><span class="none">the story — click the tab</span></div>
+    </div>
+  </nav>
+
+  <main id="md-content"></main>
+
+  <footer>
+    <p>Kittensville's Blog · cave vines n glowing berries 🌿✨ · fair winds, wanderer 🏴‍☠️</p>
+  </footer>
+
+</div>
+
+<!-- secret hatch: surrealunivs/cdw/ -->
+
+<script src="cave.js"></script>
+<script src="md.js"></script>
+<script>
+(function () {
+  var buttons = document.querySelectorAll('.tab > button');
+  Array.prototype.forEach.call(buttons, function (b) {
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(buttons, function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      loadMd(b.getAttribute('data-md'));
+    });
+  });
+  var links = document.querySelectorAll('.tab .menu a');
+  Array.prototype.forEach.call(links, function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      Array.prototype.forEach.call(buttons, function (x) { x.classList.remove('active'); });
+      var h = a.getAttribute('href');
+      if (h && h.charAt(0) === '#') {
+        location.hash = h;                       /* loadMd scrolls to it after render */
+        loadMd(a.getAttribute('data-md'));
+      } else {
+        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+        loadMd(a.getAttribute('data-md'));
+      }
+    });
+  });
+  loadMd('about.md');                           /* landing: the about page */
+  var aboutBtn = document.querySelector('.tab > button[data-md="about.md"]');
+  if (aboutBtn) aboutBtn.classList.add('active');
+})();
+</script>
+</body>
+</html>

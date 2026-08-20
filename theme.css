@@ -1,0 +1,332 @@
+/* ============================================================================
+   Cave Vines n Glowing Berries 🌿✨ — glow-theme.json → CSS
+   ----------------------------------------------------------------------------
+   Faithful conversion of glow-theme.json (glamour style) + palette.json.
+
+   Glow style key            → CSS here
+   ------------------------- → ------------------------------------------------
+   document.color            → body color / text
+   document.margin           → .page max-width + padding (layout approximation)
+   block_quote.color         → blockquote color
+   block_quote.indent_token  → blockquote border-left (recreated; no CSS key)
+   list.color                → list marker color (::marker)
+   list.level_indent         → nested ul/ol padding-left
+   heading.color             → h2–h6 colors
+   h1 (bg #3b4d28, #ffc621)  → h1 pill: background + color + centered padding
+   text.color                → base text
+   strong / emph             → font-weight / font-style
+   strikethrough.crossed_out → text-decoration: line-through
+   hr.color (#5eab2b)        → hr border-top
+   item.block_prefix "• "    → ul ::marker content
+   enumeration.block_prefix  → ol ::marker (default decimal, gold)
+   task ([✓]/[ ] gold)       → .task / .task.done ::before
+   link / link_text          → a color/underline + bold
+   image / image_text        → figure border (accent-soft) + figcaption (dim)
+   code (bg #2b3600)         → inline code
+   code_block (+chroma)      → pre + .tok-* token classes
+   table.color               → table cell color; borders from palette.border
+   definition_term/desc      → dt/dd
+   ========================================================================== */
+
+:root {
+  /* --- canonical palette (palette.json) --- */
+  --text: #a0d96f;          /* vine text   — body, assistant replies        */
+  --dim: #369228;           /* moss dim    — secondary                      */
+  --accent: #f6c453;        /* gold accent — headings, markers, tool titles */
+  --accent-soft: #f2a65a;   /* ember       — list bullets, soft accents     */
+  --border: #5eab2b;        /* vine border — hr, table borders              */
+  --user-bg: #3b4d28;       /* cave moss   — user message / h1 background   */
+  --user-text: #ffc621;     /* berry glow  — user text / h1 text            */
+  --system-text: #00ff00;   /* system text                                  */
+  --tool-pending-bg: #1e2e25;
+  --tool-success-bg: #1f2e1f;
+  --tool-error-bg: #2e2a1e;
+  --tool-output: #e1dacb;
+  --quote: #e7d053;         /* glow quote  — blockquotes                    */
+  --quote-border: #23901c;  /* quote border                                 */
+  --code: #efd055;          /* berry code  — inline code                    */
+  --code-bg: #2b3600;       /* moss code bg — code blocks                   */
+  --code-border: #3a472a;   /* code border                                  */
+  --link: #dfda3e;          /* glow link                                    */
+  --error: #fab966;
+  --success: #e6e335;
+
+  /* --- chroma extras (code_block.chroma) --- */
+  --code-text: #c8d6a8;     /* chroma text / name                           */
+  --function: #7dd3a5;      /* chroma name_function                         */
+
+  /* --- page chrome (not in the theme; dark cave backdrop) --- */
+  --bg: #0d130a;
+  --bg-panel: #101708;
+}
+
+/* ---------- base / document ------------------------------------------------- */
+* { box-sizing: border-box; }
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1100px 560px at 50% -120px, rgba(255, 198, 33, 0.055), transparent 62%),
+    var(--bg);
+  color: var(--text);                 /* document.color = #a0d96f */
+  font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono",
+               "Fira Code", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 15.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {                                /* document.margin ≈ centered max-width */
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.2rem 1.4rem 4rem;
+}
+
+::selection { background: var(--user-bg); color: var(--user-text); }
+
+a:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--code-border); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border); }
+
+/* ---------- page header ------------------------------------------------------ */
+.page-head { text-align: center; margin-bottom: 2.4rem; }
+
+.kicker {
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  margin: 0 0 1.1rem;
+}
+.kicker .live { color: var(--system-text); }   /* systemText palette role */
+
+.sub { color: var(--dim); margin: 1rem auto 0; max-width: 46ch; }
+
+/* ---------- headings --------------------------------------------------------- */
+/* heading.color = gold; h1 gets the user-pill treatment from the theme.     */
+h1, h2, h3, h4, h5, h6 { line-height: 1.25; margin: 1.8em 0 0.55em; }
+
+h1 {
+  color: var(--user-text);              /* h1.color = #ffc621        */
+  background: var(--user-bg);           /* h1.background_color       */
+  font-weight: 700;                     /* h1.bold                   */
+  font-size: 1.65rem;
+  text-align: center;                   /* h1 prefix/suffix " " ≈ padding */
+  padding: 0.7em 0.6em;
+  border-radius: 10px;
+  border: 1px solid rgba(223, 218, 62, 0.18);
+  box-shadow: 0 0 34px rgba(255, 198, 33, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+h2 { color: var(--accent); font-size: 1.35rem; }
+h3 { color: var(--accent-soft); font-size: 1.18rem; }
+h4 { color: var(--quote); font-size: 1.05rem; }
+h5 { color: var(--text); font-size: 1rem; }
+h6 { color: var(--dim); font-size: 0.95rem; font-weight: 400; }  /* h6.bold=false */
+
+/* glow prefixes (##, ###, …) rendered before each heading */
+h2::before { content: "## "; }
+h3::before { content: "### "; }
+h4::before { content: "#### "; }
+h5::before { content: "##### "; }
+h6::before { content: "###### "; }
+
+/* ---------- inline text ------------------------------------------------------ */
+strong { font-weight: 700; }            /* strong.bold   */
+em { font-style: italic; }              /* emph.italic   */
+del, s  { text-decoration: line-through; color: var(--dim); }  /* crossed_out */
+
+a {
+  color: var(--link);                   /* link.color = #dfda3e */
+  font-weight: 700;                     /* link_text.bold       */
+  text-decoration: underline;           /* link.underline        */
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+a:hover { color: var(--user-text); background: rgba(255, 198, 33, 0.07); }
+
+code {
+  background: var(--code-bg);           /* code.background_color */
+  color: var(--code);                   /* code.color = #efd055  */
+  border: 1px solid var(--code-border);
+  border-radius: 5px;
+  padding: 0.12em 0.4em;
+  font-size: 0.88em;
+}
+
+/* ---------- blockquote -------------------------------------------------------- */
+blockquote {
+  margin: 1.6em 0;
+  padding: 0.45em 1em 0.45em 1.15em;
+  color: var(--quote);                  /* block_quote.color = #e7d053 */
+  border-left: 3px solid var(--quote-border);   /* indent_token "│ " recreated */
+  background: linear-gradient(90deg, rgba(35, 144, 28, 0.14), transparent 75%);
+  border-radius: 0 8px 8px 0;
+}
+blockquote blockquote {
+  margin-right: 0;
+  border-left-color: var(--dim);
+  background: transparent;
+}
+
+/* ---------- lists ------------------------------------------------------------- */
+/* list.color = #F6C453 → gold markers; item text keeps body green.           */
+ul { list-style: disc; }
+ol { list-style: decimal; }
+ul li::marker { content: "•"; color: var(--accent); }
+ol li::marker { color: var(--accent); }
+
+ul, ol { padding-left: 1.6em; margin: 0.7em 0; }
+li { margin: 0.28em 0; }
+li > ul, li > ol { margin: 0.28em 0; padding-left: 2em; }  /* level_indent ≈ 2 */
+
+/* task list — [✓]/[ ] rendered gold like the theme's task style */
+ul.tasks { list-style: none; padding-left: 0.2em; }
+.task::before { content: "[ ] "; color: var(--accent); font-weight: 700; }
+.task.done::before { content: "[✓] "; color: var(--accent); }
+.task.done { color: var(--dim); text-decoration: line-through; }
+
+/* ---------- horizontal rule ---------------------------------------------------- */
+hr {
+  border: none;
+  border-top: 2px solid var(--border);  /* hr.color = #5eab2b */
+  border-radius: 2px;
+  margin: 2.6em 0;
+  opacity: 0.85;
+}
+
+/* ---------- code blocks (chroma → .tok-*) -------------------------------------- */
+.code-window {
+  margin: 1.6em 0;
+  border: 1px solid var(--code-border);
+  border-radius: 9px;
+  background: var(--code-bg);           /* code_block.background_color */
+  overflow: hidden;
+}
+.code-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.5em 0.9em;
+  background: rgba(58, 71, 42, 0.4);
+  border-bottom: 1px solid var(--code-border);
+  color: var(--code-text);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+}
+.code-head .dots { color: var(--border); letter-spacing: 0.35em; }
+.code-head .fname { color: var(--dim); margin-left: auto; }
+
+pre {
+  margin: 0;
+  padding: 1.1em 1.3em;
+  overflow-x: auto;
+  color: var(--code-text);              /* chroma.text / chroma.name */
+  font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono",
+               "Fira Code", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+pre code { background: none; border: 0; padding: 0; color: inherit; font-size: 1em; }
+
+/* chroma token classes (code_block.chroma) */
+.tok-comment        { color: var(--dim); font-style: italic; }        /* #369228 */
+.tok-keyword        { color: var(--accent); }                         /* #F6C453 */
+.tok-keyword-type   { color: var(--user-text); }                      /* #ffc621 */
+.tok-function       { color: var(--function); }                       /* #7DD3A5 */
+.tok-string         { color: var(--quote); }                          /* #e7d053 */
+.tok-number         { color: var(--accent-soft); }                    /* #F2A65A */
+.tok-operator       { color: var(--text); }                           /* #a0d96f */
+.tok-punctuation    { color: var(--text); }                           /* #a0d96f */
+.tok-name           { color: var(--code-text); }                      /* #c8d6a8 */
+
+/* ---------- table ----------------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  color: var(--text);                   /* table.color = #a0d96f */
+  font-size: 0.94em;
+}
+caption { color: var(--dim); font-size: 0.85em; margin-bottom: 0.5em; text-align: left; }
+th, td {
+  border: 1px solid var(--border);      /* table borders = palette.border */
+  padding: 0.55em 0.9em;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: var(--user-bg);
+  color: var(--accent);
+  font-weight: 700;
+}
+tbody tr:nth-child(even) td { background: rgba(94, 171, 43, 0.055); }
+tbody td code { white-space: nowrap; }
+
+/* ---------- image ------------------------------------------------------------------- */
+figure { margin: 1.6em 0; }
+img {
+  max-width: 100%;
+  display: block;
+  border: 1px solid var(--accent-soft); /* image.color = #F2A65A */
+  border-radius: 9px;
+  box-shadow: 0 0 26px rgba(242, 166, 90, 0.18);
+}
+figcaption {
+  margin-top: 0.5em;
+  color: var(--dim);                    /* image_text.color = #369228 */
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+/* ---------- definition list ------------------------------------------------------------ */
+dl { margin: 1em 0; }
+dt { color: var(--accent); font-weight: 700; margin-top: 0.9em; }   /* definition_term */
+dd {
+  color: var(--text);                   /* definition_description */
+  margin: 0.15em 0 0 1.4em;
+}
+dd::before { content: "🠶 "; }          /* definition_description.block_prefix */
+
+/* ---------- status notes (extra palette roles) ------------------------------------------ */
+.note { border-radius: 8px; padding: 0.7em 1em; margin: 0.8em 0; font-size: 0.92em; }
+.note.ok   { background: var(--tool-success-bg); border: 1px solid rgba(230, 227, 53, 0.35); color: var(--success); }
+.note.warn { background: var(--tool-error-bg);  border: 1px solid rgba(250, 185, 102, 0.35); color: var(--error); }
+.note code { border-color: rgba(239, 208, 85, 0.35); }
+
+/* ---------- palette swatches -------------------------------------------------------------- */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 0.7rem;
+  margin: 1.2rem 0;
+}
+.swatch {
+  background: var(--bg-panel);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.swatch .chip { height: 46px; border-bottom: 1px solid var(--code-border); }
+.swatch .meta { padding: 0.45em 0.7em; }
+.swatch .meta .name { display: block; color: var(--accent); font-size: 0.78rem; font-weight: 700; }
+.swatch .meta .hex  { color: var(--dim); font-size: 0.74rem; }
+
+/* ---------- footer ------------------------------------------------------------------------ */
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--code-border);
+  color: var(--dim);
+  font-size: 0.82rem;
+  text-align: center;
+}
+footer a { font-weight: 700; }
